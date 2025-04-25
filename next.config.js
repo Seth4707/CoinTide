@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  output: 'export',  // Changed from 'standalone' to 'export'
   images: {
     remotePatterns: [
       {
@@ -41,8 +41,13 @@ const nextConfig = {
       }
     ],
     unoptimized: true
-  }
+  },
+  trailingSlash: true,
+  distDir: '.next',
+  // Add basePath if you're not deploying to the root
+  // basePath: '',
 }
 
 module.exports = nextConfig
+
 

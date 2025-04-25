@@ -1,5 +1,6 @@
 'use client';
 
+import React from 'react';
 // Core imports
 import { useState } from 'react';
 
@@ -19,7 +20,7 @@ interface CoinData {
   name: string;
 }
 
-export default function Home() {
+export default function HomePage() {
   // State management
   const [filteredData, setFilteredData] = useState<any[]>([]); // Consider creating a type for your crypto data
   const [isSearching, setIsSearching] = useState<boolean>(false);
@@ -116,6 +117,7 @@ export default function Home() {
     </main>
   );
 }
+
 
 
 
