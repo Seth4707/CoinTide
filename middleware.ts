@@ -9,28 +9,20 @@ export async function middleware(request: NextRequest) {
     const supabase = createMiddlewareClient(
       { req: request, res },
       {
-        cookies: {
-          get(name: string) {
-            const cookie = request.cookies.get(name);
-            return cookie?.value;
-          },
-          set(name: string, value: string, options: any) {
-            res.cookies.set({
-              name,
-              value,
-              ...options,
-              sameSite: 'lax',
-              secure: process.env.NODE_ENV === 'production',
-            });
-          },
-          remove(name: string) {
-            res.cookies.set({
-              name,
-              value: '',
-              maxAge: 0,
-            });
-          },
+        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        options: {
+          db: {
+            schema: 'public'
+          }
         },
+        cookieOptions: {
+          name: 'sb-auth',
+          domain: '',
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+          path: '/'
+        }
       }
     );
 
@@ -52,6 +44,11 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: ['/dashboard/:path*']
 };
+
+
+
+
+
 
 
 

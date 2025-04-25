@@ -28,13 +28,13 @@ interface EnrichedHolding {
 
 export default function Portfolio() {
   const { user } = useAuth();
-  const router = useRouter();
   const [holdings, setHoldings] = useState<EnrichedHolding[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const fetchPortfolio = async () => {
     if (!user) return;
-    
+
     try {
       const { data: portfolioData, error } = await supabase
         .from('portfolios')
@@ -44,7 +44,7 @@ export default function Portfolio() {
 
       if (error) throw error;
 
-      const rawHoldings = portfolioData?.holdings || [];
+      const rawHoldings: Holding[] = portfolioData?.holdings || [];
       
       if (rawHoldings.length === 0) {
         setHoldings([]);
@@ -53,7 +53,7 @@ export default function Portfolio() {
       }
 
       // Get current prices from CoinGecko
-      const coinIds = rawHoldings.map(h => h.coinId).join(',');
+      const coinIds = rawHoldings.map((h: Holding) => h.coinId).join(',');
       const response = await fetch(
         `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currency=usd&include_24h_change=true`
       );
@@ -155,6 +155,7 @@ export default function Portfolio() {
     </div>
   );
 }
+
 
 
 

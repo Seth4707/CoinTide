@@ -10,9 +10,8 @@ import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ 
   subsets: ['latin'],
   display: 'swap',
-  preload: false,
-  fallback: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Arial', 'sans-serif'],
-  adjustFontFallback: true,
+  preload: true,
+  fallback: ['system-ui', 'arial'],
   weight: ['400', '500', '600', '700'],
   variable: '--font-inter',
 })
@@ -51,4 +50,5 @@ export default function RootLayout({
     </html>
   )
 }
+
 

@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import React, { Suspense, useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardContent, CardFooter } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -9,7 +9,7 @@ import { Label } from '@/components/ui/label';
 import { useAuth } from '@/contexts/AuthContext';
 import { useToast } from '@/components/ui/use-toast';
 
-export default function AuthPage() {
+function AuthContent() {
   const searchParams = useSearchParams();
   const redirectTo = searchParams.get('redirectTo') || '/';
   const router = useRouter();
@@ -64,25 +64,14 @@ export default function AuthPage() {
         });
         router.push(redirectTo);
       } else {
-        const result = await signUp(formData.email, formData.password);
-        
-        // Check if email confirmation is required
-        if (!result.session) {
-          toast({
-            title: "Account created!",
-            description: "Please check your email to confirm your account. You'll be able to log in after confirmation.",
-            duration: 6000,
-          });
-          // Switch to login mode after successful signup
-          setIsLogin(true);
-          setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
-        } else {
-          toast({
-            title: "Account created!",
-            description: "You've been successfully signed up and logged in.",
-          });
-          router.push(redirectTo);
-        }
+        await signUp(formData.email, formData.password);
+        toast({
+          title: "Account created!",
+          description: "Please check your email to confirm your account. You'll be able to log in after confirmation.",
+          duration: 6000,
+        });
+        setIsLogin(true);
+        setFormData(prev => ({ ...prev, password: '', confirmPassword: '' }));
       }
     } catch (error) {
       console.error('Authentication error:', error);
@@ -204,6 +193,12 @@ export default function AuthPage() {
   );
 }
 
-
+export default function AuthPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <AuthContent />
+    </Suspense>
+  );
+}
 
 

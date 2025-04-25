@@ -10,7 +10,8 @@ import {
   Title,
   Tooltip,
   Legend,
-  ChartOptions
+  ChartOptions,
+  ChartData
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { fetchCryptoData } from '../utils/api';
@@ -30,15 +31,40 @@ interface ChartProps {
   coinName: string;
 }
 
+type ChartDataset = {
+  label: string;
+  data: number[];
+  borderColor: string;
+  backgroundColor: string;
+  borderWidth: number;
+  tension: number;
+  fill: boolean;
+  pointRadius: number;
+  pointBackgroundColor: string;
+  pointBorderColor: string;
+  pointHoverRadius: number;
+  pointHoverBackgroundColor: string;
+  pointHoverBorderColor: string;
+}
+
 function Chart({ coinId, coinName }: ChartProps) {
-  const [chartData, setChartData] = useState({
+  const [chartData, setChartData] = useState<ChartData<'line', number[], string>>({
     labels: [],
     datasets: [
       {
         label: '',
         data: [],
         borderColor: 'rgb(75, 192, 192)',
-        tension: 0.1
+        backgroundColor: 'rgba(75, 192, 192, 0.1)',
+        borderWidth: 2,
+        tension: 0.4,
+        fill: true,
+        pointRadius: 4,
+        pointBackgroundColor: 'rgb(75, 192, 192)',
+        pointBorderColor: '#fff',
+        pointHoverRadius: 6,
+        pointHoverBackgroundColor: 'rgb(75, 192, 192)',
+        pointHoverBorderColor: '#fff'
       }
     ]
   });
@@ -100,7 +126,7 @@ function Chart({ coinId, coinName }: ChartProps) {
         labels: {
           font: {
             size: 14,
-            weight: '600'
+            weight: 'bold'
           },
           padding: 20
         }
@@ -110,7 +136,7 @@ function Chart({ coinId, coinName }: ChartProps) {
         text: '7-Day Price History',
         font: {
           size: 16,
-          weight: '600'
+          weight: 'bold'
         },
         padding: {
           bottom: 20
@@ -127,7 +153,7 @@ function Chart({ coinId, coinName }: ChartProps) {
         padding: 12,
         titleFont: {
           size: 14,
-          weight: '600'
+          weight: 'bold'
         },
         bodyFont: {
           size: 13

@@ -1,14 +1,21 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { User } from '@supabase/supabase-js';
+import { User, Session, WeakPassword } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
-  signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<{
+    user: User | null;
+    session: Session | null;
+    weakPassword?: WeakPassword;
+  }>;
+  signUp: (email: string, password: string) => Promise<{
+    user: User | null;
+    session: Session | null;
+  }>;
   logout: () => Promise<void>;
 }
 
@@ -42,23 +49,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error, data } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
 
     if (error) throw error;
-    return data;
+    return {
+      user: data.user,
+      session: data.session,
+    };
   };
 
   const signUp = async (email: string, password: string) => {
-    const { error, data } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
     });
 
     if (error) throw error;
-    return data;
+    return {
+      user: data.user,
+      session: data.session,
+    };
   };
 
   const logout = async () => {
@@ -66,7 +79,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
   };
 
-  const value = {
+  const value: AuthContextType = {
     user,
     isLoading,
     signIn,
@@ -88,4 +101,5 @@ export const useAuth = () => {
   }
   return context;
 };
+
 

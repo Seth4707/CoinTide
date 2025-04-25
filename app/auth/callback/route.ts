@@ -3,6 +3,8 @@ import { cookies } from 'next/headers';
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   try {
     const requestUrl = new URL(request.url);
@@ -14,10 +16,11 @@ export async function GET(request: NextRequest) {
       await supabase.auth.exchangeCodeForSession(code);
     }
 
-    return NextResponse.redirect(new URL('/', request.url)); // Changed from '/dashboard' to '/'
+    return NextResponse.redirect(new URL('/', request.url));
   } catch (error) {
     console.error('Auth callback error:', error);
     return NextResponse.redirect(new URL('/auth?error=callback_error', request.url));
   }
 }
+
 
