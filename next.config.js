@@ -39,13 +39,18 @@ const nextConfig = {
         hostname: 'cryptonews.net'
       }
     ],
-    unoptimized: true
+    domains: ['localhost'], // Add if you're using local images in development
+    unoptimized: false, // Change to false to enable image optimization
   },
   reactStrictMode: true,
   swcMinify: true
 }
 
 module.exports = nextConfig
+
+
+
+
 
 
 

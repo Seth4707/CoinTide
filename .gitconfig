@@ -1,1 +1,9 @@
+[http]    sslVerify = true
+    proxy = [https]
+    proxy = [core]
+    autocrlf = true
+[credential]
+
+
+
 git config --global core.autocrlf true

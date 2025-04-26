@@ -1,6 +1,7 @@
 'use client';
 
 import React from 'react';
+import Image from 'next/image';
 // Core imports
 import { useState } from 'react';
 
@@ -74,11 +75,12 @@ export default function HomePage() {
       
       {/* Marketing Banner Section */}
       <section className="w-full h-[300px] relative overflow-hidden">
-        <div 
-          className="absolute inset-0 bg-cover bg-center"
-          style={{
-            backgroundImage: 'url("/images/market.png")'
-          }}
+        <Image
+          src="/images/market.png"
+          alt="Market Banner"
+          fill
+          className="object-cover"
+          priority
         />
       </section>
 
@@ -105,10 +107,11 @@ export default function HomePage() {
               </p>
             </div>
             <div className="relative h-[400px]">
-              <img
+              <Image
                 src="/images/bullish.png"
                 alt="Crypto Analysis"
-                className="object-cover w-full h-full rounded-2xl shadow-xl"
+                fill
+                className="object-cover rounded-2xl shadow-xl"
               />
             </div>
           </div>
@@ -117,6 +120,11 @@ export default function HomePage() {
     </main>
   );
 }
+
+
+
+
+
 
 
 
