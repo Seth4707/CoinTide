@@ -1,3 +1,6 @@
+'use client';
+
+import React from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
@@ -34,81 +37,16 @@ export default function AboutPage() {
         </div>
       </div>
 
-      {/* Mission Section */}
-      <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
-        <div className="space-y-6">
-          <h2 className="text-3xl font-semibold">Our Mission</h2>
-          <p className="text-muted-foreground text-justify">
-            We strive to democratize access to cryptocurrency market data, providing traders and investors with accurate, real-time information and powerful analytics tools to make informed decisions.
-          </p>
-          <ul className="space-y-4">
-            <li className="flex items-start">
-              <svg className="h-6 w-6 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              Real-time market data and analytics
-            </li>
-            <li className="flex items-start">
-              <svg className="h-6 w-6 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              Comprehensive cryptocurrency insights
-            </li>
-            <li className="flex items-start">
-              <svg className="h-6 w-6 text-primary mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-              </svg>
-              User-friendly trading tools
-            </li>
-          </ul>
-        </div>
+      {/* Features Section with Image */}
+      <div className="mb-16">
         <div className="relative h-[400px] rounded-lg overflow-hidden shadow-xl">
           <Image
-            src="/Images/crypto 1.png"  // Updated to match your file name
+            src="/Images/crypto 1.png"
             alt="Crypto Trading Dashboard"
             fill={true}
             sizes="(max-width: 768px) 100vw, 50vw"
-            style={{ objectFit: 'cover' }}
-            priority={true}
-            className="hover:scale-105 transition-transform duration-300"
+            priority
           />
-        </div>
-      </div>
-
-      {/* Features Grid */}
-      <div className="grid md:grid-cols-3 gap-8 mb-16">
-        <div className="p-6 rounded-lg border bg-card">
-          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-            <svg className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-          </div>
-          <h3 className="text-xl font-semibold mb-2">Real-Time Updates</h3>
-          <p className="text-muted-foreground">
-            Get instant updates on cryptocurrency prices, market trends, and trading volumes.
-          </p>
-        </div>
-        <div className="p-6 rounded-lg border bg-card">
-          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-            <svg className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-            </svg>
-          </div>
-          <h3 className="text-xl font-semibold mb-2">Advanced Analytics</h3>
-          <p className="text-muted-foreground">
-            Access powerful analytical tools and charts for technical analysis.
-          </p>
-        </div>
-        <div className="p-6 rounded-lg border bg-card">
-          <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-            <svg className="h-6 w-6 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-            </svg>
-          </div>
-          <h3 className="text-xl font-semibold mb-2">Secure Platform</h3>
-          <p className="text-muted-foreground">
-            Enterprise-grade security to protect your data and transactions.
-          </p>
         </div>
       </div>
 
@@ -155,6 +93,7 @@ export default function AboutPage() {
     </div>
   );
 }
+
 
 
 
