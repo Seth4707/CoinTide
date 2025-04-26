@@ -1,55 +1,48 @@
-import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs';
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  const res = NextResponse.next();
+  let response = NextResponse.next({
+    request: {
+      headers: request.headers,
+    },
+  })
 
-  try {
-    const supabase = createMiddlewareClient(
-      { req: request, res },
-      {
-        supabaseUrl: process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        supabaseKey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-        options: {
-          db: {
-            schema: 'public'
-          }
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        get(name: string) {
+          return request.cookies.get(name)?.value
         },
-        cookieOptions: {
-          name: 'sb-auth',
-          domain: '',
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
-          path: '/'
-        }
-      }
-    );
-
-    const { data: { session } } = await supabase.auth.getSession();
-
-    if (!session && request.nextUrl.pathname.startsWith('/dashboard')) {
-      const redirectUrl = new URL('/auth', request.url);
-      redirectUrl.searchParams.set('redirectTo', request.nextUrl.pathname);
-      return NextResponse.redirect(redirectUrl);
+        set(name: string, value: string, options: any) {
+          response.cookies.set({
+            name,
+            value,
+            ...options,
+          })
+        },
+        remove(name: string, options: any) {
+          response.cookies.set({
+            name,
+            value: '',
+            ...options,
+          })
+        },
+      },
     }
+  )
 
-    return res;
-  } catch (error) {
-    console.error('Middleware error:', error);
-    return res;
-  }
+  await supabase.auth.getSession()
+
+  return response
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*']
-};
-
-
-
-
-
-
-
-
+  matcher: [
+    '/((?!_next/static|_next/image|favicon.ico|public).*)',
+  ],
+}
 

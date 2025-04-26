@@ -7,13 +7,11 @@ import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { Toaster } from "@/components/ui/toaster"
 
-const inter = Inter({ 
+const inter = Inter({
   subsets: ['latin'],
   display: 'swap',
   preload: true,
-  fallback: ['system-ui', 'arial'],
-  weight: ['400', '500', '600', '700'],
-  variable: '--font-inter',
+  weight: ['400', '500', '600', '700']
 })
 
 export const metadata: Metadata = {
@@ -50,9 +48,3 @@ export default function RootLayout({
     </html>
   )
 }
-
-
-
-
-
-

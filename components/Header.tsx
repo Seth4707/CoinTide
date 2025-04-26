@@ -10,13 +10,13 @@ import { Button } from './ui/button';
 import { Menu, X } from 'lucide-react';
 
 function Header() {
-  const { user, logout } = useAuth();
+  const { user, signOut } = useAuth(); // Changed from logout to signOut
   const { resolvedTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await signOut(); // Changed from logout to signOut
       // Redirect will happen automatically through auth state change
     } catch (error) {
       console.error('Logout error:', error);
