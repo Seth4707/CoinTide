@@ -18,10 +18,15 @@ export async function middleware(request: NextRequest) {
           return request.cookies.get(name)?.value
         },
         set(name: string, value: string, options: any) {
+          // Make sure cookies work in production by setting proper options
           response.cookies.set({
             name,
             value,
             ...options,
+            // Add these options for production environment
+            path: '/',
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
           })
         },
         remove(name: string, options: any) {
@@ -29,6 +34,11 @@ export async function middleware(request: NextRequest) {
             name,
             value: '',
             ...options,
+            // Add these options for production environment
+            path: '/',
+            maxAge: 0,
+            sameSite: 'lax',
+            secure: process.env.NODE_ENV === 'production',
           })
         },
       },
@@ -36,7 +46,6 @@ export async function middleware(request: NextRequest) {
   )
 
   await supabase.auth.getSession()
-
   return response
 }
 
@@ -45,4 +54,5 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|public).*)',
   ],
 }
+
 

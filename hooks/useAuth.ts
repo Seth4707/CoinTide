@@ -54,6 +54,7 @@ export function useAuth() {
       email,
       password,
       options: {
+        // Use dynamic origin based on environment
         emailRedirectTo: `${window.location.origin}/auth/callback`,
       },
     })
@@ -74,6 +75,7 @@ export function useAuth() {
     signOut,
   }
 }
+
 
 
 

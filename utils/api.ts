@@ -3,13 +3,16 @@ const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
 export const fetchCryptoData = async (endpoint: string) => {
   try {
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    const timeoutId = setTimeout(() => controller.abort(), 15000); // Increase timeout
 
     const response = await fetch(`${COINGECKO_API_URL}${endpoint}`, {
       signal: controller.signal,
       headers: {
         'Accept': 'application/json',
-      }
+        'Cache-Control': 'no-cache',
+      },
+      // Add credentials if needed
+      credentials: 'same-origin',
     });
 
     clearTimeout(timeoutId);
