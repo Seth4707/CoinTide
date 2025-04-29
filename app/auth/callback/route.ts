@@ -6,6 +6,16 @@ import type { NextRequest } from 'next/server'
 export async function GET(request: NextRequest) {
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const error = requestUrl.searchParams.get('error')
+  const errorDescription = requestUrl.searchParams.get('error_description')
+  
+  // Handle error from Supabase
+  if (error) {
+    console.error('Auth callback error:', error, errorDescription);
+    return NextResponse.redirect(
+      new URL(`/login?error=${encodeURIComponent(errorDescription || error)}`, request.url)
+    )
+  }
 
   // Make sure cookies are properly set with secure options in production
   if (code) {
@@ -46,15 +56,26 @@ export async function GET(request: NextRequest) {
     )
 
     try {
-      await supabase.auth.exchangeCodeForSession(code)
+      const { error } = await supabase.auth.exchangeCodeForSession(code)
+      if (error) {
+        console.error('Error exchanging code for session:', error)
+        return NextResponse.redirect(
+          new URL(`/login?error=${encodeURIComponent(error.message)}`, request.url)
+        )
+      }
     } catch (error) {
-      console.error('Error exchanging code for session:', error)
-      return NextResponse.redirect(new URL('/auth?error=callback_error', request.url))
+      console.error('Exception exchanging code for session:', error)
+      return NextResponse.redirect(
+        new URL('/login?error=callback_error', request.url)
+      )
     }
   }
 
   return NextResponse.redirect(new URL('/', request.url))
 }
+
+
+
 
 
 

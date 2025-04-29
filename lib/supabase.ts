@@ -7,8 +7,27 @@ if (!supabaseUrl || !supabaseAnonKey) {
   throw new Error('Missing Supabase environment variables')
 }
 
-// Create a single instance of the Supabase client
-export const supabase = createBrowserClient(supabaseUrl, supabaseAnonKey)
+// Create a single instance of the Supabase client with fetch options
+export const supabase = createBrowserClient(
+  supabaseUrl, 
+  supabaseAnonKey,
+  {
+    auth: {
+      flowType: 'pkce',
+      detectSessionInUrl: true,
+      persistSession: true,
+      autoRefreshToken: true,
+    },
+    global: {
+      fetch: (...args) => {
+        return fetch(...args).catch(err => {
+          console.error('Supabase fetch error:', err);
+          throw err;
+        });
+      }
+    }
+  }
+)
 
 // Type for JSON responses
 export type Json =
@@ -58,6 +77,8 @@ export interface Database {
     }
   }
 }
+
+
 
 
 

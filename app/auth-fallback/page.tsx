@@ -3,16 +3,13 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { useAuth } from '@/hooks/useAuth';
-import NetworkStatus from '@/components/NetworkStatus';
 
-export default function LoginPage() {
+export default function AuthFallbackPage() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { signIn } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,20 +17,30 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      console.log('Attempting to sign in...');
-      await signIn(email, password);
-      console.log('Sign in successful, redirecting...');
+      // Direct fetch to Supabase API
+      const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+      const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+      
+      const response = await fetch(`${supabaseUrl}/auth/v1/token?grant_type=password`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': supabaseKey!,
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.error_description || data.error || 'Authentication failed');
+      }
+      
+      console.log('Login successful');
       router.push('/');
     } catch (err: any) {
-      console.error('Login error details:', {
-        message: err.message,
-        stack: err.stack,
-        name: err.name,
-        code: err.code,
-        statusCode: err.statusCode,
-        fullError: JSON.stringify(err)
-      });
-      setError(err.message || 'Failed to sign in. Please check your credentials.');
+      console.error('Login error:', err);
+      setError(err.message || 'Failed to sign in');
     } finally {
       setLoading(false);
     }
@@ -44,13 +51,12 @@ export default function LoginPage() {
       <div className="max-w-md w-full space-y-8 p-6 bg-white rounded-xl shadow-lg">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
+            Fallback Sign In
           </h2>
+          <p className="text-center text-sm text-red-500">
+            Using direct API authentication (for troubleshooting)
+          </p>
         </div>
-        
-        {/* Add the network status component in development */}
-        {process.env.NODE_ENV !== 'production' && <NetworkStatus />}
-        
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
@@ -92,28 +98,12 @@ export default function LoginPage() {
           </div>
         </form>
 
-        <div className="text-sm text-center mt-4">
-          <Link href="/signup" className="font-medium text-primary hover:text-primary/90">
-            Don't have an account? Sign up
+        <div className="text-sm text-center">
+          <Link href="/login" className="font-medium text-primary hover:text-primary/90">
+            Back to regular login
           </Link>
-          {process.env.NODE_ENV !== 'production' && (
-            <div className="mt-2">
-              <Link href="/auth-fallback" className="text-xs text-gray-500 hover:text-gray-700">
-                Try fallback authentication
-              </Link>
-            </div>
-          )}
         </div>
       </div>
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
