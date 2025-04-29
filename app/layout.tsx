@@ -17,6 +17,15 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'Coin Tide',
   description: 'Your source for cryptocurrency data and insights.',
+  icons: {
+    icon: [
+      { url: '/Images/identity.png', sizes: '16x16', type: 'image/png' },
+      ],
+    apple: [
+      { url: '/Images/identity.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: [{ url: '/Images/identity.png' }],
+  }
 }
 
 export default function RootLayout({
@@ -48,3 +57,9 @@ export default function RootLayout({
     </html>
   )
 }
+
+
+
+
+
+

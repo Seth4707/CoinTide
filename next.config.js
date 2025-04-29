@@ -37,22 +37,23 @@ const nextConfig = {
       {
         protocol: 'https',
         hostname: 'cryptonews.net'
+      },
+      {
+        protocol: 'https',
+        hostname: 'coin-tide.vercel.app'
       }
     ],
-    domains: ['localhost'], // Add if you're using local images in development
-    unoptimized: false, // Change to false to enable image optimization
+    unoptimized: false,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
+  output: 'standalone',
   reactStrictMode: true,
-  swcMinify: true
+  swcMinify: true,
 }
 
 module.exports = nextConfig
-
-
-
-
-
-
 
 
 

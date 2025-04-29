@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
+    "build": "next build && xcopy /E /I public .next\\standalone\\public && xcopy /E /I .next\\static .next\\standalone\\.next\\static",
+    "start": "node .next/standalone/server.js",
     "lint": "next lint"
   },
   "dependencies": {
@@ -31,6 +31,7 @@
     "react-chartjs-2": "^5.3.0",
     "react-dom": "^18.2.0",
     "recharts": "^2.12.2",
+    "sharp": "^0.34.1",
     "tailwind-merge": "^2.2.1"
   },
   "devDependencies": {
@@ -45,4 +46,6 @@
     "typescript": "^5.3.3"
   }
 }
+
+
 

@@ -8,15 +8,17 @@ import { useAuth } from '@/hooks/useAuth';
 import { useTheme } from 'next-themes';
 import { Button } from './ui/button';
 import { Menu, X } from 'lucide-react';
+import myImageLoader from '@/lib/imageLoader';
 
 function Header() {
-  const { user, signOut } = useAuth(); // Changed from logout to signOut
+  const { user, signOut } = useAuth();
   const { resolvedTheme } = useTheme();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [imgError, setImgError] = useState(false);
 
   const handleLogout = async () => {
     try {
-      await signOut(); // Changed from logout to signOut
+      await signOut();
       // Redirect will happen automatically through auth state change
     } catch (error) {
       console.error('Logout error:', error);
@@ -37,12 +39,13 @@ function Header() {
             className="flex items-center hover:opacity-90 transition-opacity"
           >
             <Image
-              src="/images/Logo.png" 
+              src="/Images/identity.png"
               alt="Coin Tide"
               width={140}
               height={40}
               className="h-8 w-auto"
               priority
+              unoptimized
             />
           </Link>
 

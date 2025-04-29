@@ -21,7 +21,7 @@ interface CoinData {
   name: string;
 }
 
-export default function HomePage() {
+export default function Home() {
   // State management
   const [filteredData, setFilteredData] = useState<any[]>([]); // Consider creating a type for your crypto data
   const [isSearching, setIsSearching] = useState<boolean>(false);
@@ -74,14 +74,17 @@ export default function HomePage() {
       <PortfolioSummary />
       
       {/* Marketing Banner Section */}
-      <section className="w-full h-[300px] relative overflow-hidden">
-        <Image
-          src="/images/market.png"
-          alt="Market Banner"
-          fill
-          className="object-cover"
-          priority
-        />
+      <section className="w-full h-[300px] relative">
+        <div className="w-full h-[300px] relative overflow-hidden">
+          <Image
+            src="/Images/market.png"  
+            alt="Market Banner"
+            width={1920}
+            height={300}
+            className="w-full h-full object-cover"
+            priority
+          />
+        </div>
       </section>
 
       {/* Educational Content */}
@@ -108,10 +111,11 @@ export default function HomePage() {
             </div>
             <div className="relative h-[400px]">
               <Image
-                src="/images/bullish.png"
-                alt="Crypto Analysis"
+                src="/Images/bullish.png"  // Updated path to use correct case
+                alt="Cryptocurrency illustration"
                 fill
-                className="object-cover rounded-2xl shadow-xl"
+                className="object-cover rounded-lg"
+                priority
               />
             </div>
           </div>
@@ -120,6 +124,19 @@ export default function HomePage() {
     </main>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

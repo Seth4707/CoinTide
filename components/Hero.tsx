@@ -1,36 +1,41 @@
 'use client';
 
-import Image from 'next/image'; // Add this import
+import Image from 'next/image';
+import { useState } from 'react';
 
-function Hero() {
+export default function Hero() {
+  const [imgError, setImgError] = useState(false);
+
   return (
-    <section className="relative flex flex-col items-center justify-center min-h-[70vh]">
-      {/* Background Image - Using Next/Image for optimization */}
-      <div className="absolute inset-0">
-        <Image
-          src="/images/hero.png"
-          alt="Hero background"
-          fill
-          priority
-          className="object-cover opacity-40"
-          quality={100}
-        />
+    <section className="relative w-full h-[60vh]">  {/* Changed from h-[90vh] to h-[60vh] */}
+      <div className="absolute inset-0 w-full h-full">
+        {imgError ? (
+          <div className="w-full h-full bg-gradient-to-b from-gray-900 to-gray-700" />
+        ) : (
+          <Image
+            src="/Images/hero.png"
+            alt="Hero background"
+            width={1920}
+            height={400}
+            priority
+            unoptimized
+            className="w-full h-full object-cover"
+            onError={() => setImgError(true)}
+          />
+        )}
+        <div className="absolute inset-0 bg-black/50" />
       </div>
-      
-      {/* Gradient Overlay */}
-      <div className="absolute inset-0 bg-gradient-to-b from-primary/10 via-primary/5 to-background" />
-      
-      {/* Content */}
-      <div className="container relative px-4 mx-auto text-center space-y-8 z-10">
-        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-blue-600">
-          Welcome to <span className="text-blue-600">Coin Tide</span>
-        </h1>
-        <p className="mx-auto max-w-[700px] text-muted-foreground text-lg sm:text-xl text-white">
-          Coin Tide is a web-based application that helps users monitor live cryptocurrency prices and trends. Whether you're a casual crypto fan or an active investor, cointide offers a sleek and simple way to stay informed. The goal is to combine data, design, and functionality to bring users closer to the ever-changing crypto market.
-        </p>
+
+      <div className="relative h-full flex flex-col items-center justify-center">
+        <div className="container px-4 mx-auto text-center space-y-8">
+          <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl text-white">
+            Welcome to <span className="text-blue-500">Coin Tide</span>
+          </h1>
+          <p className="mx-auto max-w-[700px] text-gray-200 text-lg sm:text-xl">
+            Coin Tide is a web-based application that helps users monitor live cryptocurrency prices and trends. Whether you're a casual crypto fan or an active investor, cointide offers a sleek and simple way to stay informed.
+          </p>
+        </div>
       </div>
     </section>
   );
 }
-
-export default Hero;
