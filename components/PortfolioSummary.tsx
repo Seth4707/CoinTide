@@ -8,6 +8,14 @@ import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { supabase } from '@/lib/supabase';
+
+interface Holding {
+  coinId: string;
+  amount: number;
+  purchasePrice: number;
+  purchaseDate: string;
+}
 
 export default function PortfolioSummary() {
   const { user } = useAuth();
@@ -22,10 +30,70 @@ export default function PortfolioSummary() {
 
   useEffect(() => {
     if (user) {
-      const savedPortfolio = localStorage.getItem('portfolio');
-      if (savedPortfolio) {
-        setPortfolio(JSON.parse(savedPortfolio));
-      }
+      const fetchPortfolioData = async () => {
+        try {
+          // Fetch portfolio data from Supabase
+          const { data: portfolioData, error } = await supabase
+            .from('portfolios')
+            .select('*')
+            .eq('user_id', user.id)
+            .single();
+
+          if (error) throw error;
+
+          const holdings: Holding[] = portfolioData?.holdings || [];
+          
+          if (holdings.length === 0) {
+            setPortfolioStats({
+              totalValue: 0,
+              totalProfit: 0,
+            });
+            return;
+          }
+
+          // Get current prices for all coins in portfolio
+          const coinIds = holdings.map((h: Holding) => h.coinId).join(',');
+          const response = await fetch(
+            `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currency=usd&include_24h_change=true`
+          );
+          const priceData = await response.json();
+
+          // Calculate total value and profit
+          let totalValue = 0;
+          let totalProfit = 0;
+
+          holdings.forEach(holding => {
+            const currentPrice = priceData[holding.coinId]?.usd || 0;
+            const holdingValue = currentPrice * holding.amount;
+            const holdingProfit = (currentPrice - holding.purchasePrice) * holding.amount;
+            
+            // Add this log to debug the calculation
+            console.log(`Coin: ${holding.coinId}, Amount: ${holding.amount}, Price: $${currentPrice}, Value: $${holdingValue}`);
+            
+            totalValue += holdingValue;
+            totalProfit += holdingProfit;
+          });
+
+          // Add this log to see the final total
+          console.log(`Total Portfolio Value: $${totalValue}`);
+
+          setPortfolioStats({
+            totalValue,
+            totalProfit,
+          });
+          
+          // Store current prices for reference
+          setCurrentPrices(priceData);
+        } catch (error) {
+          console.error('Error fetching portfolio data:', error);
+          setPortfolioStats({
+            totalValue: 0,
+            totalProfit: 0,
+          });
+        }
+      };
+
+      fetchPortfolioData();
     }
   }, [user]);
 
@@ -73,9 +141,15 @@ export default function PortfolioSummary() {
               {/* Total Value Card */}
               <Card className="bg-white shadow-sm">
                 <CardContent className="p-6">
-                  <h3 className="text-sm font-semibold text-blue-600">Total Value</h3>
+                  <h3 className="text-sm font-semibold text-blue-600">Total Portfolio Value</h3>
                   <p className="text-2xl font-bold mt-1">
-                    ${portfolioStats.totalValue.toLocaleString()}
+                    ${portfolioStats.totalValue.toLocaleString(undefined, {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2
+                    })}
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">
+                    Sum of all coins in your portfolio
                   </p>
                 </CardContent>
               </Card>
@@ -99,4 +173,8 @@ export default function PortfolioSummary() {
     </section>
   );
 }
+
+
+
+
 

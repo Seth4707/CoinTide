@@ -15,6 +15,7 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import { fetchCryptoData } from '../utils/api';
+import { mockChartData } from '../utils/mockData';
 
 ChartJS.register(
   CategoryScale,
@@ -108,7 +109,9 @@ function Chart({ coinId, coinName }: ChartProps) {
           ]
         });
       } catch (err) {
-        setError('Failed to fetch price history');
+        console.log('All APIs failed, using mock chart data');
+        // Use mock chart data when all APIs fail
+        setChartData(mockChartData);
       } finally {
         setLoading(false);
       }

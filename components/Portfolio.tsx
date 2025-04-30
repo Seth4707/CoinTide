@@ -84,6 +84,66 @@ export default function Portfolio() {
     }
   };
 
+  const handleDeleteCoin = async (coinIndex: number) => {
+    if (!user) {
+      console.log("Cannot delete: No user logged in");
+      return;
+    }
+    
+    console.log(`Attempting to delete coin at index: ${coinIndex}`);
+    
+    try {
+      setLoading(true);
+      
+      // Fetch current portfolio
+      console.log("Fetching current portfolio...");
+      const { data: portfolioData, error: fetchError } = await supabase
+        .from('portfolios')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+      
+      if (fetchError) {
+        console.error("Error fetching portfolio:", fetchError);
+        throw fetchError;
+      }
+      
+      console.log("Current portfolio data:", portfolioData);
+      
+      // Remove the coin at the specified index
+      const updatedHoldings = [...portfolioData.holdings];
+      console.log(`Before removal: ${updatedHoldings.length} holdings`);
+      updatedHoldings.splice(coinIndex, 1);
+      console.log(`After removal: ${updatedHoldings.length} holdings`);
+      
+      // Update the portfolio with the coin removed
+      console.log("Updating portfolio in database...");
+      const { error: updateError } = await supabase
+        .from('portfolios')
+        .update({
+          holdings: updatedHoldings,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', user.id);
+      
+      if (updateError) {
+        console.error("Error updating portfolio:", updateError);
+        throw updateError;
+      }
+      
+      console.log("Portfolio updated successfully, refreshing data...");
+      // Refresh the portfolio data
+      await fetchPortfolio();
+      console.log("Portfolio refreshed");
+      
+    } catch (error) {
+      console.error('Error deleting coin:', error);
+      alert(`Failed to delete coin: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     if (user) {
       fetchPortfolio();
@@ -102,6 +162,8 @@ export default function Portfolio() {
 
   return (
     <div className="container mx-auto p-4 space-y-6">
+      {/* Debug section removed */}
+      
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Your Portfolio</h1>
         <div className="flex gap-4">
@@ -131,20 +193,33 @@ export default function Portfolio() {
                       {holding.amount.toLocaleString()} coins @ ${holding.purchasePrice.toLocaleString()}
                     </p>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium">
-                      ${holding.total_value.toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                      })}
-                    </p>
-                    <p className={`text-sm ${holding.profit_loss >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                      {holding.profit_loss >= 0 ? '+' : ''}$
-                      {Math.abs(holding.profit_loss).toLocaleString(undefined, {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                      })}
-                    </p>
+                  <div className="flex items-center gap-4">
+                    <div className="text-right">
+                      <p className="font-medium">
+                        ${holding.total_value.toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                        })}
+                      </p>
+                      <p className={`text-sm ${holding.profit_loss >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        {holding.profit_loss >= 0 ? '+' : ''}
+                        ${Math.abs(holding.profit_loss).toLocaleString(undefined, {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2
+                        })}
+                      </p>
+                    </div>
+                    <button 
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log(`Delete button clicked for ${holding.coinId} at index ${index}`);
+                        handleDeleteCoin(index);
+                      }}
+                      className="bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded text-sm"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               ))
@@ -155,23 +230,6 @@ export default function Portfolio() {
     </div>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 

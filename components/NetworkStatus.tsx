@@ -2,10 +2,18 @@
 
 import { useState, useEffect } from 'react';
 
+// Define an interface for the status state
+interface NetworkStatusState {
+  supabaseReachable: boolean;
+  apiReachable: boolean;
+  checking: boolean;
+  error: string | null;
+}
+
 export default function NetworkStatus() {
-  const [status, setStatus] = useState({
-    supabaseReachable: null,
-    apiReachable: null,
+  const [status, setStatus] = useState<NetworkStatusState>({
+    supabaseReachable: false,
+    apiReachable: false,
     checking: true,
     error: null
   });
@@ -41,12 +49,12 @@ export default function NetworkStatus() {
           checking: false,
           error: null
         });
-      } catch (error) {
+      } catch (error: unknown) {
         setStatus({
           supabaseReachable: false,
           apiReachable: false,
           checking: false,
-          error: error.message
+          error: error instanceof Error ? error.message : 'An unknown error occurred'
         });
       }
     };
@@ -67,3 +75,7 @@ export default function NetworkStatus() {
     </div>
   );
 }
+
+
+
+
