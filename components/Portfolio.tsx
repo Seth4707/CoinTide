@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import AddCoinForm from './AddCoinForm';
+import { RefreshCw } from 'lucide-react';
 
 interface Holding {
   coinId: string;
@@ -30,34 +31,49 @@ export default function Portfolio() {
   const { user } = useAuth();
   const [holdings, setHoldings] = useState<EnrichedHolding[]>([]);
   const [loading, setLoading] = useState(true);
+  const [initialLoadComplete, setInitialLoadComplete] = useState(false);
   const router = useRouter();
 
   const fetchPortfolio = async () => {
     if (!user) return;
 
     try {
+      console.log("Fetching portfolio for user:", user.id);
+      setLoading(true);
+      
       const { data: portfolioData, error } = await supabase
         .from('portfolios')
         .select('*')
         .eq('user_id', user.id)
         .single();
 
-      if (error) throw error;
+      if (error && error.code !== 'PGRST116') { // PGRST116 means no rows returned
+        console.error("Error fetching portfolio:", error);
+        throw error;
+      }
 
+      console.log("Portfolio data received:", portfolioData);
+      
       const rawHoldings: Holding[] = portfolioData?.holdings || [];
+      console.log("Raw holdings:", rawHoldings);
       
       if (rawHoldings.length === 0) {
+        console.log("No holdings found");
         setHoldings([]);
         setLoading(false);
+        setInitialLoadComplete(true);
         return;
       }
 
       // Get current prices from CoinGecko
       const coinIds = rawHoldings.map((h: Holding) => h.coinId).join(',');
+      console.log("Fetching prices for coins:", coinIds);
+      
       const response = await fetch(
         `https://api.coingecko.com/api/v3/simple/price?ids=${coinIds}&vs_currency=usd&include_24h_change=true`
       );
       const priceData = await response.json();
+      console.log("Price data received:", priceData);
 
       // Combine holdings data with current prices
       const enrichedHoldings = rawHoldings.map((holding: Holding) => {
@@ -75,12 +91,14 @@ export default function Portfolio() {
         };
       });
 
+      console.log("Enriched holdings:", enrichedHoldings);
       setHoldings(enrichedHoldings);
     } catch (error) {
       console.error('Error fetching portfolio:', error);
       setHoldings([]);
     } finally {
       setLoading(false);
+      setInitialLoadComplete(true);
     }
   };
 
@@ -150,7 +168,7 @@ export default function Portfolio() {
     }
   }, [user]);
 
-  if (loading) {
+  if (loading && !initialLoadComplete) {
     return (
       <div className="container mx-auto p-4">
         <div className="flex items-center justify-center min-h-[60vh]">
@@ -167,6 +185,13 @@ export default function Portfolio() {
       <div className="flex justify-between items-center">
         <h1 className="text-2xl font-bold">Your Portfolio</h1>
         <div className="flex gap-4">
+          <Button 
+            onClick={fetchPortfolio} 
+            variant="outline" 
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className="h-4 w-4" /> Refresh
+          </Button>
           <AddCoinForm onSuccess={fetchPortfolio} />
         </div>
       </div>
@@ -230,6 +255,8 @@ export default function Portfolio() {
     </div>
   );
 }
+
+
 
 
 

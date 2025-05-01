@@ -74,7 +74,7 @@ export default function Home() {
       <PortfolioSummary />
       
       {/* Marketing Banner Section */}
-      <section className="w-full h-[300px] relative">
+      <section className="w-full h-[300px] relative hidden sm:block">
         <div className="w-full h-[300px] relative overflow-hidden">
           <Image
             src="/Images/market.png"  
@@ -109,9 +109,9 @@ export default function Home() {
                 Stay curious. Stay informed. The crypto tide never sleeps.
               </p>
             </div>
-            <div className="relative h-[400px]">
+            <div className="relative h-[400px] hidden md:block">
               <Image
-                src="/Images/bullish.png"  // Updated path to use correct case
+                src="/Images/bullish.png"
                 alt="Cryptocurrency illustration"
                 fill
                 className="object-cover rounded-lg"
@@ -124,6 +124,8 @@ export default function Home() {
     </main>
   );
 }
+
+
 
 
 

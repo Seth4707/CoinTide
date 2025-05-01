@@ -55,6 +55,8 @@ export default function AddCoinForm({ onSuccess }: AddCoinFormProps) {
         purchaseDate: formData.purchase_date
       };
 
+      console.log("Adding new holding:", newHolding); // Debug log
+
       if (existingPortfolio) {
         // Update existing portfolio
         const holdings = existingPortfolio.holdings || [];
@@ -95,8 +97,10 @@ export default function AddCoinForm({ onSuccess }: AddCoinFormProps) {
         purchase_date: new Date().toISOString().split('T')[0]
       });
       
+      console.log("Calling onSuccess callback"); // Debug log
       if (onSuccess) onSuccess();
     } catch (error: any) {
+      console.error("Error adding coin:", error); // Debug log
       toast({
         title: "Error",
         description: error.message,
@@ -166,5 +170,6 @@ export default function AddCoinForm({ onSuccess }: AddCoinFormProps) {
     </Dialog>
   );
 }
+
 
 

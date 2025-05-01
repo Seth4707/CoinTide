@@ -39,7 +39,7 @@ export default function AboutPage() {
 
       {/* Features Section with Image */}
       <div className="mb-16">
-        <div className="relative h-[400px] rounded-lg overflow-hidden shadow-xl">
+        <div className="relative h-[400px] rounded-lg overflow-hidden shadow-xl hidden sm:block">
           <Image
             src="/Images/crypto 1.png"
             alt="Crypto Trading Dashboard"
@@ -93,6 +93,11 @@ export default function AboutPage() {
     </div>
   );
 }
+
+
+
+
+
 
 
 
